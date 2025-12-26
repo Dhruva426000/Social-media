@@ -1,37 +1,20 @@
+import { Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/auth/login/LoginPage";
+import HomePage from "./pages/home/HomePage";
+import SignUpPage from "./pages/auth/signup/SignUpPage";
+import Sidebar from "./components/common/Sidebar";
+import RightPanel from "./components/common/RightPanel";
+
 export default function App() {
   return (
-    <div data-theme="light" className="min-h-screen flex flex-col">
-      {/* Navbar */}
-      <div className="navbar bg-base-200 px-4">
-        <div className="flex-1">
-          <a className="btn btn-ghost text-xl">Social-Media 🚀</a>
-        </div>
-        <div className="flex gap-2">
-          <button className="btn btn-primary">Login</button>
-          <button className="btn btn-secondary">Sign Up</button>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <div className="hero bg-base-100 flex-grow">
-        <div className="hero-content text-center">
-          <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Welcome!</h1>
-            <p className="py-6">
-              Build your social media platform with Tailwind + DaisyUI. Fast,
-              themeable, and beautiful.
-            </p>
-            <button className="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="footer bg-base-200 p-4 text-base-content">
-        <div className="items-center grid-flow-col">
-          <p>© 2025 Social-Media Platform</p>
-        </div>
-      </footer>
+    <div data-theme="dark" className=" flex mx-auto min-h-screen">
+      <Sidebar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+      </Routes>
+      <RightPanel />
     </div>
   );
 }
