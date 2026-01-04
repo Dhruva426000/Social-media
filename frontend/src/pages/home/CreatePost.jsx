@@ -73,6 +73,7 @@ const CreatePost = () => {
           <input
             type="file"
             accept="image/*"
+            hidden
             ref={imgRef}
             onChange={handleImgChange}
           />

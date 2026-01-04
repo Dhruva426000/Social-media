@@ -3,7 +3,8 @@ import bcrypt from 'bcryptjs';
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js';
 export const signup =async(req, res) => {
     try{
-        const {fullname, username, email, password} = req.body;
+        console.log("Signup request body:", req.body);
+        const {fullName, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
             return res.status(400).json({ error: 'Please enter a valid email address' });
@@ -23,7 +24,7 @@ export const signup =async(req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = new User({
-            fullName: fullname,
+            fullName: fullName,
             username: username,
             email: email,
             password: hashedPassword,
