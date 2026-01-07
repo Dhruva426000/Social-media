@@ -75,7 +75,7 @@ export const getSuggestedUsers = async(req, res) => {
         suggestedUser.forEach((user)=>{
             user.password= null;
         });
-        res.status(200).json(suggestedUser);//returning an array of suggested users
+        res.status(200).json({suggestedUser});//returning an array of suggested users
     }
     catch (error) {
         console.error(error);
