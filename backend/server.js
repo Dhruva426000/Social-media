@@ -25,6 +25,9 @@ cloudinary.api.ping()
 const PORT=process.env.PORT || 8000;
 const app = express();
 app.use(express.urlencoded({ extended: true }));//to parse form data
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth",authRoutes);
