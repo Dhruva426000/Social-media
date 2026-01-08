@@ -43,15 +43,73 @@ const Post = ({ post }) => {
       toast.error(err.message || "Error deleting post");
     },
   });
+  const { mutate: likePost, isPending: isLiking } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/like/${post._id}`, {
+          method: "POST",
+          credentials: "include", // include cookies if needed
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to like/unlike post");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error.message || "Unexpected error occurred");
+      }
+    },
+    onSuccess: (updatedLikes) => {
+      queryClient.setQueryData(["posts"], (oldPosts) => {
+        return oldPosts.map((p) =>
+          p._id === post._id ? { ...p, likes: updatedLikes } : p
+        );
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message || "Error liking/unliking post");
+    },
+  });
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // include cookies if needed
+          body: JSON.stringify({ text: comment }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to comment on post");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error.message || "Unexpected error occurred");
+      }
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["posts"], (oldPosts) => {
+        return oldPosts.map((p) =>
+          p._id === post._id ? { ...p, commments: data } : p
+        );
+      });
+      setComment("");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Error commenting on post");
+    },
+  });
 
   const postOwner = post.user;
-  const isLiked = false;
+  const isLiked = post.likes.includes(authUser._id);
 
   const isMyPost = authUser._id === post.user._id;
 
   const formattedDate = new Date(post.createdAt).toLocaleDateString();
-
-  const isCommenting = false;
 
   const handleDeletePost = () => {
     deletePost();
@@ -59,9 +117,14 @@ const Post = ({ post }) => {
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
-  const handleLikePost = () => {};
+  const handleLikePost = () => {
+    if (isLiking) return;
+    likePost();
+  };
 
   return (
     <>
@@ -195,16 +258,17 @@ const Post = ({ post }) => {
                 className="flex gap-1 items-center group cursor-pointer"
                 onClick={handleLikePost}
               >
-                {!isLiked && (
+                {" "}
+                {isLiking && <LoadingSpinner size="sm" />}
+                {!isLiked && !isLiking && (
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
                 )}
-                {isLiked && (
+                {isLiked && !isLiking && (
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500 " />
                 )}
-
                 <span
-                  className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-                    isLiked ? "text-pink-500" : ""
+                  className={`text-sm group-hover:text-pink-500 ${
+                    isLiked ? "text-pink-500" : " text-slate-500"
                   }`}
                 >
                   {post.likes.length}

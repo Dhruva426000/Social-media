@@ -44,7 +44,8 @@ export const likeunlikePost = async (req, res) => {
         if(userLikedPost){// wants to unlike the post
            await Post.updateOne({_id:postId},{$pull:{likes:userId}})
            await User.updateOne({_id:userId},{$pull:{likedPosts:postId}})
-           return res.status(200).json({message : "post unliked"})
+           const updatedLikes = post.likes.filter((id)=> id.toString() !== userId);
+           res.status(200).json(updatedLikes);
         }
         else{
             post.likes.push(userId);
@@ -57,7 +58,8 @@ export const likeunlikePost = async (req, res) => {
                 type:"like",
             })
             await notification.save();
-             return  res.status(200).json({message:"p0st as been liked"})
+            const updatedLikes = post.likes;
+            return  res.status(200).json(updatedLikes);
          }
     }
     catch(err){
@@ -81,9 +83,8 @@ export const commentOnPost = async (req, res) => {
         const comment = {user:userId,text}
         post.commments.push(comment)
         await post.save()
-        return res.status(200).json({ message: "Comment added successfully",
-        post
-})
+        const updatedComments= post.commments;
+        return res.status(200).json(updatedComments);
     }
     catch(err){
         console.error("Error commenting on post:", err);

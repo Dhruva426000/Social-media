@@ -47,14 +47,20 @@ export default function App() {
 
   return (
     <div data-theme="dark" className="flex mx-auto min-h-screen">
-      {/* Only show sidebar if user is authenticated */}
+      {/* Common component, bc it's not wrapped with Routes */}
       {authUser && <Sidebar />}
-
       <Routes>
-        {/* Protected routes */}
         <Route
           path="/"
           element={authUser ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
         />
         <Route
           path="/notifications"
@@ -64,21 +70,8 @@ export default function App() {
           path="/profile/:username"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
-
-        {/* Public routes */}
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-        />
       </Routes>
-
-      {/* Only show right panel if user is authenticated */}
       {authUser && <RightPanel />}
-
       <Toaster />
     </div>
   );
